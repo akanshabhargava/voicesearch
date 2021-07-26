@@ -1,0 +1,126 @@
+
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Voice Search</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" type="text/css" href="voicesearch.css">
+	</head>
+	<body>
+
+
+	<div class="container">
+	  <form action="https://www.google.com/search" method="get" target="_blank" id="search-form">
+	   
+	  	  <input name="q" type="hidden" />
+	    <input name="qfront" type="text" placeholder="Search..." autocomplete="off" autofocus>
+	 		<button type="button" class="voicesearchbutton btn" id="search-button" onclick="search();"><i class="fa fa-search"></i></button>
+	                       
+
+	  </form>
+	  <!-- <script async src=
+	"https://cse.google.com/cse.js?cx=007019498718139788174:amtiepdpgeg">
+	        </script>
+	        <div class="gcse-search"></div> -->
+	  <p class="voicesearchinfo"></p>
+	  <div class="voiceanimator-projector"></div> 
+
+	  <div class="voiceanimator">
+	  		<span>Speak Now</span>
+	      <div class="circle_ripple"></div>
+	      <div class="circle">
+	        <div class="circle-2">
+	          <i class="fa fa-microphone"></i>
+	        </div>
+	      </div>
+
+	  </div>
+	</div>
+
+	<script type="text/javascript">
+		
+	 var domainroot = "www.jimsindia.org";
+
+  const searchForm = document.querySelector("#search-form");
+  const searchFormInput = searchForm.querySelector('input[name="qfront"]'); // <=> 
+  searchFormInput.addEventListener("keydown", function (e) {
+      if (e.code === "Enter") {  //checks whether the pressed key is "Enter"
+          search();
+      }
+  });
+	const voicesearchinfo   = document.querySelector(".voicesearchinfo");
+	const voiceanimator     = document.querySelector(".voiceanimator");
+	const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+	let voiceanimatorprojector = document.querySelector(".voiceanimator-projector");
+
+	if(SpeechRecognition) {
+		const recognition = new SpeechRecognition();
+		recognition.continuous = true;
+		recognition.lang = "en-US";
+		searchForm.insertAdjacentHTML("beforeend", '<button type="button" id="voice-button" class="voicesearchbutton"><i class="fa fa-microphone"></i></button>');
+		searchFormInput.style.paddingRight = "50px";
+
+		const micBtn = searchForm.querySelector("#voice-button");
+		const micIcon = micBtn.firstElementChild;
+
+		micBtn.addEventListener("click", micBtnClick);
+		function micBtnClick() {
+			if(micIcon.classList.contains("fa-microphone")) { 
+			  recognition.start();
+			}
+			else {
+				recognition.stop();
+			}
+		}
+
+
+		recognition.addEventListener("start", startSpeechRecognition); 
+		function startSpeechRecognition() {
+			micIcon.classList.add("active");
+			voiceanimatorprojector.classList.add("active");
+			searchFormInput.focus();
+			voiceanimator.style.display = 'block';
+		}
+
+		recognition.addEventListener("end", endSpeechRecognition); 
+		function endSpeechRecognition() {
+			micIcon.classList.remove("active");
+						voiceanimatorprojector.classList.remove("active");
+			searchFormInput.focus();
+			voiceanimator.style.display = 'none';
+		}
+
+		recognition.addEventListener("result", resultOfSpeechRecognition); // Fires when you stop talking
+		function resultOfSpeechRecognition(event) {
+			const current = event.resultIndex;
+			const transcript = event.results[current][0].transcript;
+		
+			searchFormInput.value = transcript;
+			searchForm.submit();
+		}
+	}
+	else {
+	  console.log("Your Browser does not support speech Recognition");
+	  voicesearchinfo.textContent = "Your Browser does not support Speech Recognition";
+	}
+
+
+	function search() {
+
+        if (searchFormInput.value == '') {
+        	 	document.querySelector(".voicesearchinfo").innerHTML='Enter text to search';
+          	document.querySelector(".voicesearchinfo").style.display='block';
+            searchFormInput.focus();
+        } else {
+
+        		  document.querySelector(".voicesearchinfo").style.display='none';
+        		  searchForm.q.value = "site:" + domainroot + " " + searchFormInput.value;
+        		  searchForm.submit();
+
+        }
+
+}
+	</script>
+	</body>
+	</html>
